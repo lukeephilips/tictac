@@ -4,7 +4,7 @@ defmodule TicTac.State do
   @players [:x, :o]
 
   # statuses: initial, choose_p1, in_progress, game_over, winner_declared
-  # events :choose_p1, current_player
+  # events :choose_p1, :play
   defstruct status: :initial,
             current_player: nil,
             winner: nil,
