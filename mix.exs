@@ -1,9 +1,9 @@
-defmodule Tictac.MixProject do
+defmodule TicTac.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :tictac,
+      app: :tic_tac,
       version: "0.1.0",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,

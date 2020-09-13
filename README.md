@@ -1,6 +1,6 @@
-# Tictac
+# TicTac
 
-**TODO: Add description**
+**TODO: Tic Tac Toe elixir state machine**
 
 ## Installation
 
