@@ -33,9 +33,10 @@ defmodule TicTac.State do
   end
 
   # player not in @players error
-  def event(_state, {_, player}) when player not in @players do
-    {:error, :invalid_player}
-  end
+  # def event(_state, {_, player}) when player not in @players do
+  #   IO.puts(player)
+  #   {:error, :invalid_player}
+  # end
 
   # play a turn
   def event(%State{status: :in_progress, current_player: current_player} = state, {:play, current_player}) do
@@ -47,12 +48,13 @@ defmodule TicTac.State do
     {:error, :out_of_turn}
   end
 
-  # invalid player tries to play
-  def event(%State{status: :in_progress} = state, {:check_for_winner, player}) do
-    case player do
-      :x -> {:ok, %State{state | status: :game_over, winner: player}}
-      :o -> {:ok, %State{state | status: :game_over, winner: player}}
-      _  -> {:error, :invalid_player}
+  # check for winner
+  def event(%State{status: :in_progress} = state, {:check_for_winner, winner}) do
+    case winner do
+      :x    -> {:ok, %State{state | status: :game_over, winner: winner, current_player: nil}}
+      :o    -> {:ok, %State{state | status: :game_over, winner: winner, current_player: nil}}
+      false -> {:ok, state}
+      _     -> {:error, :invalid_winner}
     end
   end
 
@@ -60,9 +62,13 @@ defmodule TicTac.State do
   def event(%State{status: :in_progress} = state, {:game_over?, over_or_not}) do
     case over_or_not do
       :not_over  -> {:ok, state}
-      :game_over -> {:ok, %State{state | status: :game_over, winner: :none}}
+      :game_over -> {:ok, %State{state | status: :game_over, winner: :tie}}
       _          -> {:error, :invalid_game_over_status}
     end
+  end
+
+  def event(%State{status: :game_over} = state, {:game_over?, _}) do
+    {:ok, state}
   end
 
   # catch-all error

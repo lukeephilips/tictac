@@ -14,9 +14,14 @@ defmodule TicTac.CLI do
   def handle(%State{status: :in_progress} = state, :request_move) do
     display_board(state.board)
     IO.puts("What's your move, #{state.current_player}?")
-    col = IO.gets("Col: ") |> String.trim |> String.to_integer
-    row = IO.gets("Row: ") |> String.trim |> String.to_integer
+    col = IO.gets("Col: ") |> trimmed_int
+    row = IO.gets("Row: ") |> trimmed_int
     {col, row}
+  end
+
+  def handle(%State{status: :game_over} = state, _) do
+    display_board(state.board)
+    IO.puts("#{state.winner} won. Hooray.")
   end
 
   def show(board, c, r) do
@@ -33,5 +38,13 @@ defmodule TicTac.CLI do
     ----------
     #{show(b,1,3)} | #{show(b,2,3)} | #{show(b,3,3)}
     """
+  end
+
+  defp trimmed_int(str) do
+    str |> String.trim |> String.to_integer
+    # case Integer.parse(str) do
+    #   {:ok, int} -> int
+    #   error         -> error
+    # end
   end
 end

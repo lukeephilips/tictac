@@ -17,7 +17,7 @@ defmodule TicTac.Square do
   end
 
 
-  def new(_col, _row), do: {:error, :invalid_square}
+  # def new(_col, _row), do: {:error, :invalid_square}
 
   @doc """
   Creates a new_board of :empty Squares
