@@ -7,17 +7,21 @@ defmodule TicTac do
   alias TicTac.{Square, State}
 
   def start(ui) do
-    {:ok, game} = State.new(ui)
-    player = ui.(game, :get_player)
-    {:ok, game} = State.event(game, {:choose_p1, player})
-    game
+    with {:ok, game} <- State.new(ui),
+         player         <- ui.(game, :get_player),
+         {:ok, game}    <- State.event(game, {:choose_p1, player}),
+    do: handle(game), else: (error -> error)
   end
 
   def handle(%{status: :in_progress} = game) do
     with {col, row} <- game.ui.(game, :request_move),
       {:ok, board} <- play_at(game.board, col, row, game.current_player),
-      {:ok, game} <- State.event(%{game | board: board}, play: game.current_player),
-    do: game
+      {:ok, game} <- State.event(%{game | board: board}, {:play, game.current_player}),
+    do: handle(game), else: (error -> error)
+  end
+
+  def handle(%{status: _} = game) do
+    {:error, game}
   end
 
   @doc """
@@ -38,12 +42,12 @@ defmodule TicTac do
     with {:ok, valid_player}  <- check_player(player),
          {:ok, square}        <- Square.new(col, row),
          {:ok, updated_board}     <- place_piece(board, square, valid_player),
-    do: updated_board
+    do: {:ok, updated_board}, else: (error -> error)
   end
 
-  defp place_piece(board, place, player) do
+    defp place_piece(board, place, player) do
     case board[place] do
-      nil -> {:error, :invalid_place}
+      nil -> {:error, :invalid_location}
       :x -> {:error, :occupied}
       :o -> {:error, :occupied}
       :empty -> {:ok, %{board | place => player}}
