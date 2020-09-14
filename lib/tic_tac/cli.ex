@@ -21,7 +21,9 @@ defmodule TicTac.CLI do
 
   def handle(%State{status: :game_over} = state, _) do
     display_board(state.board)
-    IO.puts("#{state.winner} won. Hooray.")
+    case state.winner
+    :tie -> IO.puts("it's a tie. this game sucks.")
+    _ -> IO.puts("#{state.winner} won. hooray.")
   end
 
   def show(board, c, r) do
